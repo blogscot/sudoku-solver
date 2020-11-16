@@ -68,7 +68,7 @@ btn = [
     [
         sg.Button("Solve", pad=(3, 10)),
         sg.Button("Clear", pad=(3, 10)),
-        sg.Button("Close", pad=(3, 10)),
+        sg.Button("Close", pad=((198, 3), 10)),
     ]
 ]
 
