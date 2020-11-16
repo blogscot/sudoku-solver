@@ -36,9 +36,11 @@ def convert(values):
 
 
 def display(window, puzzle):
+    """Displays the specified puzzle."""
     for row in range(SUDOKU_SIZE):
         for col in range(SUDOKU_SIZE):
-            window[(row, col)].update(puzzle[row][col])
+            value = puzzle[row][col]
+            window[(row, col)].update(value if value else "")
 
 
 def clear_display(window):
