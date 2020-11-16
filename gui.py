@@ -1,6 +1,6 @@
 import PySimpleGUI as sg
 import pprint
-from sudoku import solve_puzzle
+from sudoku import solve_puzzle, SUDOKU_SIZE
 
 
 pp = pprint.PrettyPrinter(indent=4)
@@ -36,9 +36,15 @@ def convert(values):
 
 
 def display(window, puzzle):
+    for row in range(SUDOKU_SIZE):
+        for col in range(SUDOKU_SIZE):
+            window[(row, col)].update(puzzle[row][col])
+
+
+def clear_display(window):
     for row in range(9):
         for col in range(9):
-            window[(row, col)].update(puzzle[row][col])
+            window[(row, col)].update("")
 
 
 # Layout
@@ -47,16 +53,22 @@ input_rows = [
     [
         sg.InputText(
             key=(row, col),
-            default_text=get_value(row, col),
+            default_text="",
             size=(4, 1),
             pad=((7, 3) if col in (3, 6) else 3, (7, 3) if row in (3, 6) else 3),
         )
-        for col in range(9)
+        for col in range(SUDOKU_SIZE)
     ]
-    for row in range(9)
+    for row in range(SUDOKU_SIZE)
 ]
 
-btn = [[sg.Button("Solve", pad=(3, 10)), sg.Button("Close", pad=(3, 10))]]
+btn = [
+    [
+        sg.Button("Solve", pad=(3, 10)),
+        sg.Button("Clear", pad=(3, 10)),
+        sg.Button("Close", pad=(3, 10)),
+    ]
+]
 
 layout = input_rows + btn
 
@@ -67,6 +79,9 @@ while True:
 
     if event == sg.WIN_CLOSED or event == "Close" or event == "Exit":
         break
+
+    if event == "Clear":
+        clear_display(window)
 
     if event == "Solve":
         puzzle = convert(values.values())
