@@ -1,20 +1,12 @@
 import PySimpleGUI as sg
+import pickle
 from sudoku import solve_puzzle, SUDOKU_SIZE
 
 
 sg.ChangeLookAndFeel("GreenTan")
 
-stored_puzzle = [
-    [5, 3, 0, 0, 7, 0, 0, 0, 0],
-    [6, 0, 0, 1, 9, 5, 0, 0, 0],
-    [0, 9, 8, 0, 0, 0, 0, 6, 0],
-    [8, 0, 0, 0, 6, 0, 0, 0, 3],
-    [4, 0, 0, 8, 0, 3, 0, 0, 1],
-    [7, 0, 0, 0, 2, 0, 0, 0, 6],
-    [0, 6, 0, 0, 0, 0, 2, 8, 0],
-    [0, 0, 0, 4, 1, 9, 0, 0, 5],
-    [0, 0, 0, 0, 8, 0, 0, 7, 9],
-]
+filename = "puzzle"
+
 
 # Helper funcions
 
@@ -45,6 +37,20 @@ def clear_display(window):
     for row in range(9):
         for col in range(9):
             window[(row, col)].update("")
+
+
+def save(puzzle):
+    with open(filename, "wb") as file:
+        pickle.dump(puzzle, file)
+
+
+def load_puzzle():
+    try:
+        with open(filename, "rb") as file:
+            loaded_puzzle = pickle.load(file)
+        display(window, loaded_puzzle)
+    except FileNotFoundError as e:
+        print(e)
 
 
 # Layout
@@ -93,7 +99,8 @@ while True:
 
     if event == "Store":
         puzzle = convert(values.values())
-        stored_puzzle = chunk(puzzle)
+        puzzle = chunk(puzzle)
+        save(puzzle)
 
     if event == "Restore":
-        display(window, stored_puzzle)
+        load_puzzle()
