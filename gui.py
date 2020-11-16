@@ -1,13 +1,10 @@
 import PySimpleGUI as sg
-import pprint
 from sudoku import solve_puzzle, SUDOKU_SIZE
 
 
-pp = pprint.PrettyPrinter(indent=4)
-
 sg.ChangeLookAndFeel("GreenTan")
 
-puzzle = [
+stored_puzzle = [
     [5, 3, 0, 0, 7, 0, 0, 0, 0],
     [6, 0, 0, 1, 9, 5, 0, 0, 0],
     [0, 9, 8, 0, 0, 0, 0, 6, 0],
@@ -32,6 +29,7 @@ def chunk(nums, n=9):
 
 
 def convert(values):
+    values = list(values)[1:]  # Ignore dictionary value for the menus
     return list(map(lambda x: 0 if x == "" else int(x), values))
 
 
@@ -50,6 +48,8 @@ def clear_display(window):
 
 
 # Layout
+
+menus = [[sg.Menu([["Game", ["Store", "Restore"]]])]]
 
 input_rows = [
     [
@@ -72,7 +72,7 @@ btn = [
     ]
 ]
 
-layout = input_rows + btn
+layout = menus + input_rows + btn
 
 window = sg.Window("Sudoku Solver", layout, font="Courier 12")
 
@@ -90,3 +90,10 @@ while True:
         puzzle = chunk(puzzle)
         solution = solve_puzzle(puzzle)
         display(window, solution)
+
+    if event == "Store":
+        puzzle = convert(values.values())
+        stored_puzzle = chunk(puzzle)
+
+    if event == "Restore":
+        display(window, stored_puzzle)
