@@ -21,6 +21,7 @@ def chunk(nums, n=9):
 
 
 def convert(values):
+    """Convert puzzle string values into integer values"""
     values = list(values)[1:]  # Ignore dictionary value for the menus
     return list(map(lambda x: 0 if x == "" else int(x), values))
 
@@ -34,8 +35,8 @@ def display(window, puzzle):
 
 
 def clear_display(window):
-    for row in range(9):
-        for col in range(9):
+    for row in range(SUDOKU_SIZE):
+        for col in range(SUDOKU_SIZE):
             window[(row, col)].update("")
 
 
@@ -61,8 +62,8 @@ input_rows = [
     [
         sg.InputText(
             key=(row, col),
-            default_text="",
-            size=(4, 1),
+            size=(3, 2),
+            enable_events=True,
             pad=((7, 3) if col in (3, 6) else 3, (7, 3) if row in (3, 6) else 3),
         )
         for col in range(SUDOKU_SIZE)
@@ -74,19 +75,31 @@ btn = [
     [
         sg.Button("Solve", pad=(3, 10)),
         sg.Button("Clear", pad=(3, 10)),
-        sg.Button("Close", pad=((198, 3), 10)),
+        sg.Button("Close", pad=((146, 3), 10)),
     ]
 ]
 
 layout = menus + input_rows + btn
 
-window = sg.Window("Sudoku Solver", layout, font="Courier 12")
+window = sg.Window("Sudoku Solver", layout, font="Courier 14")
+
+# Event loop
 
 while True:
     event, values = window.read()
 
     if event == sg.WIN_CLOSED or event == "Close" or event == "Exit":
         break
+
+    # validate cell contents
+    if type(event) == tuple:
+        cell_contents = values[event]
+        if (
+            len(cell_contents) > 1
+            or len(cell_contents) == 1
+            and cell_contents not in "0123456789"
+        ):
+            window[event].update(cell_contents[:-1])
 
     if event == "Clear":
         clear_display(window)
@@ -107,3 +120,5 @@ while True:
 
     if event == "Restore":
         load_puzzle()
+
+window.close()

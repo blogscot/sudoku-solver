@@ -1,10 +1,8 @@
-import pprint
-
-pp = pprint.PrettyPrinter(indent=4)
 SUDOKU_SIZE = 9
 
 
 def is_complete(puzzle):
+    """Returns True if all the cells are filled"""
     for row in range(SUDOKU_SIZE):
         for col in range(SUDOKU_SIZE):
             if puzzle[row][col] == 0:
@@ -41,16 +39,16 @@ def _get_grid(puzzle, row, col):
 def _evaluate_cells(puzzle):
     """Iterates through the unresolved cells evaluating the possible candidate values."""
     cells = dict()
-    for y in range(SUDOKU_SIZE):
-        for x in range(SUDOKU_SIZE):
-            if puzzle[y][x] == 0:
+    for row in range(SUDOKU_SIZE):
+        for col in range(SUDOKU_SIZE):
+            if puzzle[row][col] == 0:
                 candidates = set(range(1, SUDOKU_SIZE + 1))
                 taken = set(
-                    _get_row(puzzle, y)
-                    + _get_column(puzzle, x)
-                    + _get_grid(puzzle, y // 3, x // 3)
+                    _get_row(puzzle, row)
+                    + _get_column(puzzle, col)
+                    + _get_grid(puzzle, row // 3, col // 3)
                 )
-                cells[(y, x)] = candidates.difference(taken)
+                cells[(row, col)] = candidates.difference(taken)
 
     return cells
 
@@ -91,7 +89,7 @@ def backtrack(puzzle):
                     puzzle[row][col] = value
                     if backtrack(puzzle):
                         return True
-            # all taken so backtrack!
-            break
+
+            break  # all taken so backtrack!
 
     puzzle[row][col] = 0
