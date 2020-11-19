@@ -4,6 +4,15 @@ pp = pprint.PrettyPrinter(indent=4)
 SUDOKU_SIZE = 9
 
 
+def is_complete(puzzle):
+    for row in range(SUDOKU_SIZE):
+        for col in range(SUDOKU_SIZE):
+            if puzzle[row][col] == 0:
+                return False
+
+    return True
+
+
 def _get_row(puzzle, row):
     """Returns the non-zero numbers for the specified row."""
     return [num for num in puzzle[row] if num > 0]
@@ -29,7 +38,7 @@ def _get_grid(puzzle, row, col):
     ]
 
 
-def _check(puzzle):
+def _evaluate_cells(puzzle):
     """Iterates through the unresolved cells evaluating the possible candidate values."""
     cells = dict()
     for y in range(SUDOKU_SIZE):
@@ -52,7 +61,7 @@ def solve_puzzle(puzzle, update=True):
         return puzzle
 
     update = False
-    cells = _check(puzzle)
+    cells = _evaluate_cells(puzzle)
     for key, candidates in cells.items():
         if len(candidates) == 1:
             update = True
@@ -60,3 +69,29 @@ def solve_puzzle(puzzle, update=True):
             puzzle[y][x] = candidates.pop()
 
     return solve_puzzle(puzzle, update)
+
+
+def backtrack(puzzle):
+    """Solves the puzzle using backtracking"""
+    if is_complete(puzzle):
+        return True
+
+    for i in range(81):
+        row = i // SUDOKU_SIZE
+        col = i % SUDOKU_SIZE
+        if puzzle[row][col] == 0:
+            taken = set(
+                _get_row(puzzle, row)
+                + _get_column(puzzle, col)
+                + _get_grid(puzzle, row // 3, col // 3)
+            )
+            for value in range(1, SUDOKU_SIZE + 1):
+                # Check that this value has not already be used
+                if not value in taken:
+                    puzzle[row][col] = value
+                    if backtrack(puzzle):
+                        return True
+            # all taken so backtrack!
+            break
+
+    puzzle[row][col] = 0

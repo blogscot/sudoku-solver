@@ -1,6 +1,6 @@
 import PySimpleGUI as sg
 import pickle
-from sudoku import solve_puzzle, SUDOKU_SIZE
+from sudoku import solve_puzzle, SUDOKU_SIZE, is_complete, backtrack
 
 
 sg.ChangeLookAndFeel("GreenTan")
@@ -95,6 +95,9 @@ while True:
         puzzle = convert(values.values())
         puzzle = chunk(puzzle)
         solution = solve_puzzle(puzzle)
+        # Hard puzzles need another approach
+        if not is_complete(solution):
+            backtrack(solution)
         display(window, solution)
 
     if event == "Store":
