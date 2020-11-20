@@ -61,7 +61,9 @@ def load_puzzle():
 
 # Layout
 
-menus = [[sg.Menu([["Game", ["Store", "Restore"]]])]]
+menus = [
+    [sg.Menu([["Game", ["Store", "Restore"]]], text_color="white", font="Courier 13")]
+]
 
 input_rows = [
     [
