@@ -50,8 +50,13 @@ def load_puzzle():
         with open(filename, "rb") as file:
             loaded_puzzle = pickle.load(file)
         display(window, loaded_puzzle)
-    except FileNotFoundError as e:
-        print(e)
+    except FileNotFoundError:
+        sg.popup(
+            "Nothing to restore",
+            title="Restore Error",
+            auto_close=True,
+            font="Courier 14",
+        )
 
 
 # Layout
